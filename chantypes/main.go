@@ -11,8 +11,9 @@ const (
 	timeFormat = ".000" // time.StampMilli
 	timeUnit   = time.Millisecond
 
-	validatorSleep = 30
-	adderSleep     = 20
+	generatorSleep = 10
+	validatorSleep = 20
+	adderSleep     = 30
 )
 
 var total = 0
@@ -30,7 +31,9 @@ func timeTaken(end, start time.Time) string {
 }
 
 func main() {
-	for buffSize := 1; buffSize <= 6; buffSize++ {
+	fmt.Printf("start, timeUnit=%s, generator=%d, validator=%d, adder=%d\n\n",
+		"ms", generatorSleep, validatorSleep, adderSleep)
+	for buffSize := 1; buffSize <= 5; buffSize++ {
 		total = 0
 		run(buffSize)
 
@@ -41,8 +44,7 @@ func main() {
 
 func run(chanBuffSize int) {
 	start := time.Now()
-	fmt.Printf("start, total=%d, buffChanSize=%d, timeUnit=%s, validator=%d, adder=%d\n",
-		total, chanBuffSize, "ms", validatorSleep, adderSleep)
+	fmt.Printf("start, total=%d, buffChanSize=%d\n", total, chanBuffSize)
 
 	ch1 := make(chan work, chanBuffSize)
 	ch2 := make(chan work, chanBuffSize)
@@ -54,17 +56,19 @@ func run(chanBuffSize int) {
 
 	wg.Wait()
 
-	end := time.Now()
-	fmt.Printf("end, %s\n", timeTaken(end, start))
-
 	if total != 15 {
 		log.Fatalf("total want=15, got=%d\n", total)
 	}
+
+	end := time.Now()
+	fmt.Printf("end, %s\n", timeTaken(end, start))
 }
 
 func generator(ch1 chan<- work) {
 	for i := 1; i <= 5; i++ {
-		ch1 <- work{id: i, start: time.Now()}
+		w := work{id: i, start: time.Now()}
+		generatorWork()
+		ch1 <- w
 	}
 	close(ch1)
 	wg.Done()
@@ -89,6 +93,10 @@ func adder(ch2 <-chan work) {
 		fmt.Printf("adder, %s\n", timeTaken(w.end, w.start))
 	}
 	wg.Done()
+}
+
+func generatorWork() {
+	time.Sleep(timeUnit * generatorSleep)
 }
 
 func validatorWork() {
