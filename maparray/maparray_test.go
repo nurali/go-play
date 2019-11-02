@@ -5,37 +5,56 @@ import (
 	"testing"
 )
 
-func testMap(t *testing.T) {
-	slotMap := NewSlotMap()
+func TestMap(t *testing.T) {
+	slots := NewSlotMap()
+	for i := 1; i <= 10; i++ {
+		slots.Add(&Slot{number: i, free: true})
+	}
 
-	// for slotNo := 1; slotNo <= 100; slotNo++ {
-	// 	slotMap.Add(&Slot{number: slotNo, free: true})
-	// }
-	// for slotNo := 1; slotNo <= 100; slotNo++ {
-	// 	if slotNo%2 == 0 {
-	// 		slotMap.Remove(slotNo)
-	// 	}
-	// }
+	// slot no 11
+	slotNo := 11
+	slots.Add(&Slot{number: slotNo, free: true})
+	slot := slots.Get(slotNo)
+	fmt.Println(slot)
+	slots.Remove(slotNo)
+	slot = slots.Get(slotNo)
+	fmt.Println(slot)
+	slotNo = slots.NextFreeSlot()
+	fmt.Println(slotNo)
 
-	slotNo := 1
-	slotMap.Add(&Slot{number: slotNo, free: true})
-	slot := slotMap.Get(slotNo)
+	// slot no 5
+	slotNo = 5
+	slots.Remove(slotNo)
+	slot = slots.Get(slotNo)
 	fmt.Println(slot)
-	slotMap.Remove(slotNo)
-	slot = slotMap.Get(slotNo)
-	fmt.Println(slot)
+	slotNo = slots.NextFreeSlot()
+	fmt.Println(slotNo)
 }
 
-func testArr(t *testing.T) {
-	slotArr := NewSlotArr()
+func TestArr(t *testing.T) {
+	slots := NewSlotArr()
+	for i := 1; i <= 10; i++ {
+		slots.Add(&Slot{number: i, free: true})
+	}
 
-	slotNo := 1
-	slotArr.Add(&Slot{number: slotNo, free: true})
-	slot := slotArr.Get(slotNo)
+	// slot no 11
+	slotNo := 11
+	slots.Add(&Slot{number: slotNo, free: true})
+	slot := slots.Get(slotNo)
 	fmt.Println(slot)
-	slotArr.Remove(slotNo)
-	slot = slotArr.Get(slotNo)
+	slots.Remove(slotNo)
+	slot = slots.Get(slotNo)
 	fmt.Println(slot)
+	slotNo = slots.NextFreeSlot()
+	fmt.Println(slotNo)
+
+	// slot no 5
+	slotNo = 5
+	slots.Remove(slotNo)
+	slot = slots.Get(slotNo)
+	fmt.Println(slot)
+	slotNo = slots.NextFreeSlot()
+	fmt.Println(slotNo)
 }
 
 var SLOTS = 1000
